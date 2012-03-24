@@ -11,7 +11,7 @@ def parse_metropotam_xml(xml_file):
     for location in doc.iter('location'):
         for coord in location.iter('coord'):
             yield {
-                'id': id_pattern.match(location.attrib['id']).group('id'),
+                'id': 'm-'+id_pattern.match(location.attrib['id']).group('id'),
                 'name': location.attrib['name'],
                 'lat': float(coord.attrib['lat']),
                 'lon': float(coord.attrib['lng']),
