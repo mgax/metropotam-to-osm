@@ -1,3 +1,4 @@
+import simplejson as json
 import lxml.etree
 
 
@@ -15,9 +16,8 @@ def parse_metropotam_xml(xml_file):
 
 def main():
     import sys
-    from pprint import pprint
-    for location in parse_metropotam_xml(sys.stdin):
-        pprint(location)
+    data = list(parse_metropotam_xml(sys.stdin))
+    json.dump(data, sys.stdout, indent=2)
 
 
 if __name__ == '__main__':
