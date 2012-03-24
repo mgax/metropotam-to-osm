@@ -39,15 +39,15 @@ class MatchOSMMetroData:
         
         amenity_coresp = {
         'Restaurante': 'restaurant',
-        'Cluburi': 'club',
+        'Cluburi': 'nightclub',
         'Baruri': 'bar',
         'Cafenele': 'cafe',
         'Terase': 'cafe',#FIXME
         'Magazine': 'shop',
-        'Hoteluri': 'hotel',#TODO
+        'Hoteluri': 'hotel',
         'Galerii': 'gallery',
-        'Muzee': 'museum',#TODO
-        'Ceainarii': 'tea_house',#TODO
+        'Muzee': 'museum',
+        'Ceainarii': 'teahouse',#TODO
         'Teatre': 'theatre',
         'Alte-locuri': 'other',#FIXME
         'Cinematografe': 'cinema',
@@ -69,14 +69,21 @@ class MatchOSMMetroData:
             for stuff in new_metro_data:
                 if place['name'].find(stuff['name']) > -1 or \
                     stuff['name'].find(place['name']) > -1: #TODO: use Levenshtein_distance
+                    if not place['type'] in stuff['type']:
+                        # TODO: these probably need to be updated from Metropotam, but keeping the OSM coords
+                        print 'Types do not match for %s/%s: %s vs %s' % (place['name'], stuff['name'], place['type'], str(stuff['type']))
+                        continue
                     lat_diff = math.fabs(place['lat'] - stuff['lat']) * 111000 #in m
                     lon_diff = math.fabs(place['lon'] - stuff['lon']) * 70000  #in m
                     distance = math.sqrt(lat_diff * lat_diff + lon_diff * lon_diff)
                     if distance > 100:
+                        #TODO: not sure about these; they could well be the same
+                        print '%s is too far away from %s' % (place['name'], stuff['name'])
                         continue
                     count += 1
-                    #print "%d. OSM: %s(%f,%f), Metropotam: %s(%f,%f); type: %s, %s; distance: %f" % (count, place['name'], place['lat'], place['lon'], stuff['name'], stuff['lat'], stuff['lon'], place['type'], str(stuff['type']), distance)
-                    print stuff['id']
+                    #TODO: these can be safely ignored
+                    print "%d. OSM: %s(%f,%f), Metropotam: %s(%f,%f); type: %s; distance: %f" % (count, place['name'], place['lat'], place['lon'], stuff['name'], stuff['lat'], stuff['lon'], place['type'], distance)
+                    #print stuff['id']
 
 if __name__ == "__main__":
     acceptall = False
