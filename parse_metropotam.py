@@ -4,14 +4,20 @@ import lxml.etree
 def parse_metropotam_xml(xml_file):
     doc = lxml.etree.parse(xml_file)
     for location in doc.iter('location'):
-        print location.attrib['name']
+        out = {'name': location.attrib['name'], 'coord': []}
         for coord in location.iter('coord'):
-            print '  ', coord.attrib['lat'], coord.attrib['lng']
+            out['coord'].append({
+                'lat': float(coord.attrib['lat']),
+                'lng': float(coord.attrib['lng']),
+            })
+        yield out
 
 
 def main():
     import sys
-    parse_metropotam_xml(sys.stdin)
+    from pprint import pprint
+    for location in parse_metropotam_xml(sys.stdin):
+        pprint(location)
 
 
 if __name__ == '__main__':
