@@ -14,5 +14,9 @@ def list_to_geojson(record_list):
 
 if __name__ == '__main__':
     import sys
-    doc = list_to_geojson(json.load(sys.stdin))
+    if len(sys.argv) > 1:
+        with open(sys.argv[1]) as f:
+            exclude_list = f.read().split()
+    records = [r for r in json.load(sys.stdin) if r['id'] not in exclude_list]
+    doc = list_to_geojson(records)
     geojson.dump(doc, sys.stdout, indent=2)
