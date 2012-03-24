@@ -73,8 +73,8 @@ class MatchOSMMetroData:
                         # TODO: these probably need to be updated from Metropotam, but keeping the OSM coords
                         print 'Types do not match for %s/%s: %s vs %s' % (place['name'], stuff['name'], place['type'], str(stuff['type']))
                         continue
-                    lat_diff = math.fabs(place['lat'] - stuff['lat']) * 111000 #in m
-                    lon_diff = math.fabs(place['lon'] - stuff['lon']) * 70000  #in m
+                    lat_diff = math.fabs(place['lat'] - stuff['lat']) * 111000 #in m FIXME: ugly hack, use Great circle distances instead
+                    lon_diff = math.fabs(place['lon'] - stuff['lon']) * 70000  #in m FIXME: ugly hack, use Great circle distances instead
                     distance = math.sqrt(lat_diff * lat_diff + lon_diff * lon_diff)
                     if distance > 100:
                         #TODO: not sure about these; they could well be the same
