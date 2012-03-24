@@ -67,50 +67,55 @@ class ExtractPubData:
 
     def searchAmenities(self):
         #urlHead = "http://osmxapi.hypercube.telascience.org/api/0.6/node[amenity="
-        urlHead = "http://open.mapquestapi.com/xapi/api/0.6/node[amenity="
+        urlHead = "http://open.mapquestapi.com/xapi/api/0.6/node["
         data = []
-        for amenity in ['drinking_water', 'bar', 'bbq', 'biergarten', 'cafe', 'fast_food', 'food_court', 'ice_cream', 'pub', 'restaurant', 'nightclub', 'cinema', 'theatre']:
-            url = urlHead + amenity + "][bbox=" + self._area + "]"
-            print url
-            xmlText = self.pageText(url)
+        objectives = {
+        'amenity': ['drinking_water', 'bar', 'bbq', 'biergarten', 'cafe', 'fast_food', 'food_court', 'ice_cream', 'pub', 'restaurant', 'nightclub', 'cinema', 'theatre','teahouse'],
+        'tourism': ['hotel','art_gallery','museum'],
+        }
+        for tag_key in objectives:
+            for tag_value in objectives[tag_key]:
+                url = urlHead + tag_key + "=" + tag_value + "][bbox=" + self._area + "]"
+                print url
+                xmlText = self.pageText(url)
 
-            try:
-                document = xml.dom.minidom.parseString(xmlText)
-                nodes = document.getElementsByTagName("node")
-                #if len(nodes) > 0:
-                #    print nodes[0].__class__
-                #import pdb;
-                #pdb.set_trace()
-                for node in nodes:
-                    place = {}
-                    place['type'] = amenity
-                    place['id'] = node.getAttribute('id')
-                    place['lat'] = float(node.getAttribute('lat'))
-                    place['lon'] = float(node.getAttribute('lon'))
-                    print place
-                    for tag in node.childNodes:
-                        if tag.nodeType != tag.ELEMENT_NODE:
-                            continue
-                        if tag.tagName != "tag" or tag.hasAttribute('k') == False or tag.hasAttribute('v') == False:
-                            continue
-                        if tag.getAttribute('k') == "name":
-                            xml_name = string.lower(tag.getAttribute('v'))
-                            xml_name = string.replace(xml_name, u'ă', u'a')
-                            xml_name = string.replace(xml_name, u'â', u'a')
-                            xml_name = string.replace(xml_name, u'î', u'i')
-                            xml_name = string.replace(xml_name, u'ş', u's')
-                            xml_name = string.replace(xml_name, u'ș', u's')
-                            xml_name = string.replace(xml_name, u'ţ', u't')
-                            xml_name = string.replace(xml_name, u'ț', u't')
-                            xml_name = string.replace(xml_name, u'—', u'-')
-                            xml_name = string.replace(xml_name, u'–', u'-')
+                try:
+                    document = xml.dom.minidom.parseString(xmlText)
+                    nodes = document.getElementsByTagName("node")
+                    #if len(nodes) > 0:
+                    #    print nodes[0].__class__
+                    #import pdb;
+                    #pdb.set_trace()
+                    for node in nodes:
+                        place = {}
+                        place['type'] = tag_value
+                        place['id'] = node.getAttribute('id')
+                        place['lat'] = float(node.getAttribute('lat'))
+                        place['lon'] = float(node.getAttribute('lon'))
+                        print place
+                        for tag in node.childNodes:
+                            if tag.nodeType != tag.ELEMENT_NODE:
+                                continue
+                            if tag.tagName != "tag" or tag.hasAttribute('k') == False or tag.hasAttribute('v') == False:
+                                continue
+                            if tag.getAttribute('k') == "name":
+                                xml_name = string.lower(tag.getAttribute('v'))
+                                xml_name = string.replace(xml_name, u'ă', u'a')
+                                xml_name = string.replace(xml_name, u'â', u'a')
+                                xml_name = string.replace(xml_name, u'î', u'i')
+                                xml_name = string.replace(xml_name, u'ş', u's')
+                                xml_name = string.replace(xml_name, u'ș', u's')
+                                xml_name = string.replace(xml_name, u'ţ', u't')
+                                xml_name = string.replace(xml_name, u'ț', u't')
+                                xml_name = string.replace(xml_name, u'—', u'-')
+                                xml_name = string.replace(xml_name, u'–', u'-')
 
-                            place['name'] = xml_name
-                    #print place
-                    data.append(place)
-            except Exception as inst:
-                self.loge("Generic error: " + str(inst))
-                return 0
+                                place['name'] = xml_name
+                        #print place
+                        data.append(place)
+                except Exception as inst:
+                    self.loge("Generic error: " + str(inst))
+                    return 0
              
         #print data
         f = open("centru_vechi_osm.json", "w+")
