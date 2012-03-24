@@ -1,0 +1,2 @@
+lxml==2.3.3
+simplejson==2.4.0
